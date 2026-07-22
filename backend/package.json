@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-
-"scripts": {
+  "scripts": {
     "dev": "node src/server.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "sonar": "sonar-scanner"
-},
-
+    "sonar": "dotenv -e .env -- sonar-scanner",
+    "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
+    "dotenv-cli": "^11.0.0",
     "jest": "^30.4.2",
+    "sonarqube-scanner": "^5.0.0",
     "supertest": "^7.2.2"
   }
 }
