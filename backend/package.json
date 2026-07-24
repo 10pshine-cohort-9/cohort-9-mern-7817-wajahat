@@ -1,0 +1,32 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "sonar": "dotenv -e .env -- sonar-scanner",
+    "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.9.0",
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
+    "pg": "^8.22.0",
+    "prisma": "^7.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "dotenv-cli": "^11.0.0",
+    "jest": "^30.4.2",
+    "sonarqube-scanner": "^5.0.0",
+    "supertest": "^7.2.2"
+  }
+}
