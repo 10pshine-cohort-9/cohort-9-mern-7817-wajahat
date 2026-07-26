@@ -1,6 +1,8 @@
 const express = require('express');
-const app = express();
+const requestLogger = require("./middleware/requestLogger");
 
+const app = express();
+app.use(requestLogger);l //we place it here beacuse middlewares work from top to btm 
 app.use(express.json());
 app.get('/health', (req, res) => {
   res.status(200).json({
