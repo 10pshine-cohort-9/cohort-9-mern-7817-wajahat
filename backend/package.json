@@ -7,7 +7,7 @@
     "dev": "node src/server.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "sonar": "dotenv -e .env -- sonar-scanner",
+    "sonar": "dotenv -e .env -- sonar-scanner-npm",
     "prisma:generate": "prisma generate",
     "postinstall": "prisma generate"
   },
