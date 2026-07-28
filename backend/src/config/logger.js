@@ -3,7 +3,6 @@ const path = require("path");
 const fs = require("fs");
 
 const logDir = path.join(process.cwd(), "logs");
-
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
