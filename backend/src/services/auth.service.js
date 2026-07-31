@@ -1,12 +1,19 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../config/prisma");
 const logger = require("../config/logger");
+<<<<<<< HEAD
 const { generateToken, verifyToken } = require("../utils/jwt");
 const { error } = require("node:console");
 
 
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 //configured this for email and password checks
+=======
+const { generateToken } = require("../utils/jwt");
+
+
+const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
+>>>>>>> 993a2c863a66ae192ca3ddedbecf3393fdac2910
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_REGEX = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
 
@@ -77,6 +84,7 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
   };
 };
 
+<<<<<<< HEAD
 const loginUser = async ({ email, password }) => {
 
   if (!email || !password) {
@@ -131,5 +139,10 @@ const loginUser = async ({ email, password }) => {
 
 module.exports = {
   registerUser, loginUser
+=======
+
+module.exports = {
+  registerUser,
+>>>>>>> 993a2c863a66ae192ca3ddedbecf3393fdac2910
 };
 
