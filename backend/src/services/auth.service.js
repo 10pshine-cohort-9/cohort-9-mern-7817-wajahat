@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../config/prisma");
 const logger = require("../config/logger");
-const { generateToken } = require("../utils/jwt");
+const { generateToken, verifyToken } = require("../utils/jwt");
+const { error } = require("node:console");
 
 
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
@@ -76,8 +77,59 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
   };
 };
 
+const loginUser = async ({ email, password }) => {
+
+  if (!email || !password) {
+    const error = new Error("Email and password both are required");
+    error.statusCode = 400;
+    throw error;
+  }
+  const userFound = await prisma.user.findUnique({
+    where: {
+      email:email
+    },
+  });
+  if (!userFound) {
+    const error = new Error("Invalid email or password");
+    error.statusCode = 401;
+    throw error;
+  }
+  const isPasswordCorrect = await bcrypt.compare(
+    password,
+    userFound.password
+  );
+
+  if (!isPasswordCorrect) {
+    const error = new Error(" Invalid password, try again");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  logger.info(
+    {
+      userId: userFound.id,
+      email: userFound.email,
+    },
+    "User logged in successfully"
+  );
+
+  const token = generateToken({
+    id: userFound.id,
+    email: userFound.email,
+  });
+
+  return {
+    user: {
+      id: userFound.id,
+      firstName: userFound.firstName,
+      lastName: userFound.lastName,
+      email: userFound.email,
+    },
+    token,
+  };
+};
 
 module.exports = {
-  registerUser,
+  registerUser, loginUser
 };
 
