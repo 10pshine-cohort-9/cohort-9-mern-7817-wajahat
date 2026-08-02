@@ -1,7 +1,6 @@
 const express = require('express');
 const requestLogger = require("./middlewares/requestLogger");
 const authRoutes=require('./routes/authRoutes')
-const authRoutes=require('./routes/authRoutes')
 const app = express();
 const errorhandler=require('./middlewares/errorHandler')
 app.use(requestLogger); //we place it here beacuse middlewares work from top to btm 
