@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../config/prisma");
 const logger = require("../config/logger");
-const { generateToken, verifyToken } = require("../utils/jwt");
+const jwt = require("../utils/jwt");
 const { error } = require("node:console");
 const { use } = require("react");
 
@@ -67,7 +67,7 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
     "user registered successfully"
   );
 
-  const token = generateToken({
+  const token = jwt.generateToken({
     id: user.id,
     email: user.email,
   });
@@ -113,7 +113,7 @@ const loginUser = async ({ email, password }) => {
     "User logged in successfully"
   );
 
-  const token = generateToken({
+  const token = jwt.generateToken({
     id: userFound.id,
     email: userFound.email,
   });

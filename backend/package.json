@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node src/server.js",
     "test": "jest",
-    "test:unit": "mocha \"src/unit/**/*.test.js\"",
+    "test:unit": "mocha \"src/tests/unit/**/*.test.js\"",
     "test:coverage": "jest --coverage",
     "sonar": "dotenv -e .env -- sonar-scanner-npm",
     "prisma:generate": "prisma generate",

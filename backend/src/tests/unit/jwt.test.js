@@ -1,5 +1,6 @@
+require("dotenv").config();
 const { expect } = require("chai");
-const { generateToken, verifyToken } = require("../utils/jwt");
+const { generateToken, verifyToken } = require("../../utils/jwt");
 describe("checking jwt utility", () => {
     it("should generate a token", () => {
         const token = generateToken({
