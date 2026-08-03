@@ -64,7 +64,7 @@ describe("registerUser()", function () {
       updatedAt: new Date(),
     });
     jwtStub.generateToken.returns("fake-jwt-token");
-
+    try{
     const result = await authService.registerUser({
       firstName: "Ali",
       lastName: null,
@@ -83,6 +83,10 @@ describe("registerUser()", function () {
     sinon.assert.calledOnce(bcrypt.hash);
     sinon.assert.calledOnce(prismaStub.user.create);
     sinon.assert.calledOnce(jwtStub.generateToken);
+  }
+  catch(err){
+    throw err
+  }
   });
 
   it("should reject if email already exists", async function () {

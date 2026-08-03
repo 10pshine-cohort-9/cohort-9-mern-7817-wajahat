@@ -44,7 +44,7 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
+  try{
   const user = await prisma.user.create({
     data: {
       firstName,
@@ -63,7 +63,7 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
   });
 
   logger.info(
-    { userId: user.id, email: user.email },
+    { userId: user.id },
     "user registered successfully"
   );
 
@@ -76,7 +76,13 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
     user,
     token,
   };
+
+}
+catch(err){
+  throw err;
+}
 };
+
 
 const loginUser = async ({ email, password }) => {
   if (!email || !password) {
@@ -108,7 +114,6 @@ const loginUser = async ({ email, password }) => {
   logger.info(
     {
       userId: userFound.id,
-      email: userFound.email,
     },
     "User logged in successfully"
   );
@@ -149,8 +154,7 @@ const getMe=async(userid)=>{
     throw error;
   }
   logger.info({
-    id:user.id,
-    email:user.email
+    id:user.id
   },"user profile fetched successfully");
   return user;
 }
@@ -158,8 +162,7 @@ const getMe=async(userid)=>{
 const logoutUser = async (user) => {
   logger.info(
     {
-      userId: user.id,
-      email: user.email,
+      userId: user.id
     },
     "User logged out successfully"
   );

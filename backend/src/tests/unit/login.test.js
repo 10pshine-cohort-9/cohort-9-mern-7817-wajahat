@@ -60,7 +60,7 @@ describe("loginUser()", () => {
     sinon.stub(bcrypt, "compare").resolves(true);
 
     jwtStub.generateToken.returns("fake-token");
-
+    try{
     const result = await authService.loginUser({
       email: "ali@gmail.com",
       password: "password123!",
@@ -72,6 +72,9 @@ describe("loginUser()", () => {
     sinon.assert.calledOnce(prismaStub.user.findUnique);
     sinon.assert.calledOnce(bcrypt.compare);
     sinon.assert.calledOnce(jwtStub.generateToken);
+  }catch(err){
+      throw err;
+  }
   });
 
   it("should reject invalid password", async () => {

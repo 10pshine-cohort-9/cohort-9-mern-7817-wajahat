@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
-    "chai": "^6.2.2",
+    "chai": "^4.5.0",
     "dotenv-cli": "^11.0.0",
     "jest": "^30.4.2",
     "mocha": "^11.7.6",
