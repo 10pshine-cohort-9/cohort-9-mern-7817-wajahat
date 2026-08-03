@@ -2,8 +2,6 @@ const bcrypt = require("bcrypt");
 const prisma = require("../config/prisma");
 const logger = require("../config/logger");
 const jwt = require("../utils/jwt");
-const { error } = require("node:console");
-const { use } = require("react");
 
 
 const SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;

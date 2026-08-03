@@ -1,6 +1,6 @@
-const { get } = require("node:http");
+
 const authService = require("../services/auth.service");
-const { log } = require("node:console");
+
 
 const register=async(req,res,next)=>{
     try {
