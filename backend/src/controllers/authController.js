@@ -40,7 +40,16 @@ const getMe=async(req,res,next)=>{
     next(error)
   }
 }
+const logout = async (req, res, next) => {
+  try {
+    const result = await authService.logoutUser(req.user);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports={
     register,
-    login,getMe
+    login,getMe,logout
 }

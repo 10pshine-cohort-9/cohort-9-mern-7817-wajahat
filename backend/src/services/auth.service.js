@@ -155,8 +155,23 @@ const getMe=async(userid)=>{
   return user;
 }
 
+const logoutUser = async (user) => {
+  logger.info(
+    {
+      userId: user.id,
+      email: user.email,
+    },
+    "User logged out successfully"
+  );
+
+  return {
+    success: true,
+    message: "User logged out successfully",
+  };
+};
+
 
 module.exports = {
-  registerUser, loginUser, getMe
+  registerUser, loginUser, getMe,logoutUser
 };
 
