@@ -1,13 +1,17 @@
-const pino = require("pino");
 const path = require("path");
-const fs = require("fs");
+const pino = require("pino");
+const logDirectory = path.join(__dirname, "../../logs");
+const logFilePath = path.join(logDirectory, "app.log");
 
-const logDir = path.join(process.cwd(), "logs");
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
-}
 const logger = pino(
-  pino.destination(path.join(logDir, "app.log"))
+  {
+    level: process.env.LOG_LEVEL || "info",
+  },
+  pino.destination({
+    dest: logFilePath,
+    mkdir: true, 
+    sync: false, 
+  })
 );
 
 module.exports = logger;
