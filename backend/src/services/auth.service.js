@@ -10,6 +10,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_REGEX = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
 
 const registerUser = async ({ firstName, lastName, email, password }) => {
+  try{
   if (!email || !password) {
     const error = new Error("Email and password are required");
     error.statusCode = 400;
@@ -35,14 +36,14 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
   });
 
   if (existingUser) {
-    logger.warn({ email }, "Registration failed: email already exists");
+    logger.warn({ userId: existingUser.id }, "Registration failed: email already exists");
     const error = new Error("Email already registered");
     error.statusCode = 409;
     throw error;
   }
 
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-  try{
+  
   const user = await prisma.user.create({
     data: {
       firstName,
@@ -76,14 +77,18 @@ const registerUser = async ({ firstName, lastName, email, password }) => {
   };
 
 }
-catch(err){
-  throw err;
-}
+catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    throw err;
+  }
 };
 
 
 const loginUser = async ({ email, password }) => {
-  if (!email || !password) {
+  try{
+    if (!email || !password) {
     const error = new Error("Email and password both are required");
     error.statusCode = 400;
     throw error;
@@ -130,9 +135,17 @@ const loginUser = async ({ email, password }) => {
     },
     token,
   };
+}
+catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    throw err;
+  }
 };
 
 const getMe=async(userid)=>{
+  try{
   const user= await prisma.user.findUnique({
     where:{
       id:userid
@@ -156,8 +169,16 @@ const getMe=async(userid)=>{
   },"user profile fetched successfully");
   return user;
 }
+ catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    throw err;
+  }
+}
 
 const logoutUser = async (user) => {
+  try{
   logger.info(
     {
       userId: user.id
@@ -169,6 +190,13 @@ const logoutUser = async (user) => {
     success: true,
     message: "User logged out successfully",
   };
+  }
+  catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    throw err;
+  }
 };
 
 
