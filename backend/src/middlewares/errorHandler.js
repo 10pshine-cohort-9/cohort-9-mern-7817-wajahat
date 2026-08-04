@@ -1,14 +1,35 @@
 const logger = require("../config/logger");
-module.exports = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  if (statusCode === 500) {
-    logger.error(err);
-  }
 
-  const responseMessage =
-  statusCode === 500 ? "Internal Server Error" : err.message;
-  res.status(statusCode).json({
+const errorHandler = (err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+
+  const executionTime =
+    req.startTime ? Date.now() - req.startTime : null;
+
+  logger.error(
+    {
+      method: req.method,
+      api: req.originalUrl,
+      message: err.message,
+      result: "FAILED",
+      statusCode,
+      executionTimeMs: executionTime,
+
+      userId: req.user?.id || null,
+
+      requestBody: req.body,
+      requestParams: req.params,
+      requestQuery: req.query,
+
+      stack: err.stack,
+    },
+    "Request Failed"
+  );
+
+  return res.status(statusCode).json({
     success: false,
-    message: responseMessage,
+    message: err.message,
   });
 };
+
+module.exports = errorHandler;
