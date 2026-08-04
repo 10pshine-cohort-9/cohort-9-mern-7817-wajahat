@@ -31,7 +31,79 @@ const getAllNotes = async (req, res, next) => {
   }
 };
 
+const deleteNote = async (req, res, next) => {
+  try {
+    const result = await notesService.deleteNote(
+      req.params.id,
+      req.user.id
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateNote = async (req, res, next) => {
+  try {
+    const result = await notesService.updateNote(
+      req.params.id,
+      req.user.id,
+      req.body
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Note updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const toggleStar = async (req, res, next) => {
+  try {
+    const result = await notesService.toggleStar(
+      req.params.id,
+      req.user.id
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Star status updated",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getNoteById = async (req, res, next) => {
+  try {
+    const result = await notesServices.getNoteById(
+      req.params.id,
+      req.user.id
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Note fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   postNote,
   getAllNotes,
+  deleteNote,
+  updateNote,
+  toggleStar,
+  getNoteById
 };

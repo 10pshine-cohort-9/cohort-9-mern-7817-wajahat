@@ -69,6 +69,186 @@ const getAllNotes = async (userId) => {
     }
 }
 
+const deleteNote = async (noteId, userId) => {
+ try{
+  const note = await prisma.note.findFirst({
+    where: {
+      id: noteId,
+      userId,
+    },
+  });
+
+  if (!note) {
+    const error = new Error("Note not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  await prisma.note.delete({
+    where: {
+      id: noteId,
+    },
+  });
+
+  logger.info(
+    {
+      noteId,
+      userId,
+    },
+    "Note deleted successfully"
+  );
+
+  return {
+    message: "Note deleted successfully",
+  };
+}
+catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        throw error;
+    }
+};
+
+const updateNote = async (noteId, userId, { title, content }) => {
+try{
+  const note = await prisma.note.findFirst({
+    where: {
+      id: noteId,
+      userId,
+    },
+  });
+
+  if (!note) {
+    const error = new Error("Note not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const updatedNote = await prisma.note.update({
+    where: {
+      id: noteId,
+    },
+    data: {
+      title,
+      content,
+    },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      isStarred: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  logger.info(
+    {
+      noteId,
+      userId,
+    },
+    "Note updated successfully"
+  );
+
+  return updatedNote;
+
+}catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        throw error;
+    }
+}
+
+const toggleStar = async (noteId, userId) => {
+    try{
+  const note = await prisma.note.findFirst({
+    where: {
+      id: noteId,
+      userId,
+    },
+  });
+
+  if (!note) {
+    const error = new Error("Note not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const updatedNote = await prisma.note.update({
+    where: {
+      id: noteId,
+    },
+    data: {
+      isStarred: !note.isStarred,
+    },
+    select: {
+      id: true,
+      title: true,
+      isStarred: true,
+      updatedAt: true,
+    },
+  });
+
+  logger.info(
+    {
+      noteId,
+      userId,
+      isStarred: updatedNote.isStarred,
+    },
+    "Note star status updated"
+  );
+
+  return updatedNote;}
+  catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        throw error;
+    }
+};
+
+const getNoteById = async (noteId, userId) => {
+  try {
+    const note = await prisma.note.findFirst({
+      where: {
+        id: noteId,
+        userId,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        isStarred: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!note) {
+      const error = new Error("Note not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    logger.info(
+      {
+        noteId,
+        userId,
+      },
+      "Retrieved note successfully"
+    );
+
+    return note;
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    throw error;
+  }
+};
+
 module.exports = {
-    createNote,getAllNotes
+    createNote,getAllNotes,deleteNote,updateNote,toggleStar,getNoteById
 }

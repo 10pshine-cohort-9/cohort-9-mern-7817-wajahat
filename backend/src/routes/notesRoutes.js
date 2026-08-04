@@ -5,5 +5,9 @@ const noteController=require('../controllers/notesController')
 
 router.post('/',authenticater,noteController.postNote);
 router.get('/',authenticater,noteController.getAllNotes);
+router.patch("/:id", authenticater, noteController.updateNote);
+router.delete("/:id", authenticater, noteController.deleteNote);
+router.patch("/:id/star", authenticater, noteController.toggleStar);
+router.get("/:id", authenticate, noteController.getNoteById);
 
 module.exports=router;
