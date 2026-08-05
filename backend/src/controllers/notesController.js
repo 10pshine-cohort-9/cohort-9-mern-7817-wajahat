@@ -33,7 +33,7 @@ const getAllNotes = async (req, res, next) => {
 
 const deleteNote = async (req, res, next) => {
   try {
-    const result = await notesService.deleteNote(
+    const result = await notesServices.deleteNote(
       req.params.id,
       req.user.id
     );
@@ -49,7 +49,7 @@ const deleteNote = async (req, res, next) => {
 
 const updateNote = async (req, res, next) => {
   try {
-    const result = await notesService.updateNote(
+    const result = await notesServices.updateNote(
       req.params.id,
       req.user.id,
       req.body
@@ -67,7 +67,7 @@ const updateNote = async (req, res, next) => {
 
 const toggleStar = async (req, res, next) => {
   try {
-    const result = await notesService.toggleStar(
+    const result = await notesServices.toggleStar(
       req.params.id,
       req.user.id
     );
@@ -137,5 +137,6 @@ module.exports = {
   updateNote,
   toggleStar,
   getNoteById,
-  getStarredNotes,searchNotes
+  getStarredNotes,
+  searchNotes
 };
