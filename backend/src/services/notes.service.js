@@ -249,6 +249,96 @@ const getNoteById = async (noteId, userId) => {
   }
 };
 
+const getStarredNotes = async (userId) => {
+  try {
+    const notes = await prisma.note.findMany({
+      where: {
+        userId,
+        isStarred: true,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        isStarred: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    logger.info(
+      {
+        userId,
+        count: notes.length,
+      },
+      "Retrieved starred notes"
+    );
+
+    return notes;
+  } catch (error) {
+    if (!error.statusCode) error.statusCode = 500;
+    throw error;
+  }
+};
+
+const searchNotes = async (userId, query) => {
+  try {
+    if (!query) {
+      const error = new Error("Search query is required");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const notes = await prisma.note.findMany({
+      where: {
+        userId,
+        OR: [
+          {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            content: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        isStarred: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    logger.info(
+      {
+        userId,
+        query,
+        count: notes.length,
+      },
+      "Search completed"
+    );
+
+    return notes;
+  } catch (error) {
+    if (!error.statusCode) error.statusCode = 500;
+    throw error;
+  }
+};
+
 module.exports = {
-    createNote,getAllNotes,deleteNote,updateNote,toggleStar,getNoteById
+    createNote,getAllNotes,deleteNote,updateNote,toggleStar,getNoteById,getStarredNotes,searchNotes
 }

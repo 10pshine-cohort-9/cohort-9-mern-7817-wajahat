@@ -99,11 +99,43 @@ const getNoteById = async (req, res, next) => {
   }
 };
 
+const getStarredNotes = async (req, res, next) => {
+  try {
+    const result = await notesServices.getStarredNotes(req.user.id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Starred notes fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const searchNotes = async (req, res, next) => {
+  try {
+    const result = await notesServices.searchNotes(
+      req.user.id,
+      req.query.q
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Search completed successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   postNote,
   getAllNotes,
   deleteNote,
   updateNote,
   toggleStar,
-  getNoteById
+  getNoteById,
+  getStarredNotes,searchNotes
 };

@@ -8,6 +8,8 @@ router.get('/',authenticater,noteController.getAllNotes);
 router.patch("/:id", authenticater, noteController.updateNote);
 router.delete("/:id", authenticater, noteController.deleteNote);
 router.patch("/:id/star", authenticater, noteController.toggleStar);
-router.get("/:id", authenticate, noteController.getNoteById);
+router.get("/:id", authenticater, noteController.getNoteById);
+router.get("/starred", authenticater, noteController.getStarredNotes);
+router.get("/search", authenticate, noteController.searchNotes);
 
 module.exports=router;
