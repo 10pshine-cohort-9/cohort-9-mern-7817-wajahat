@@ -5,11 +5,12 @@ const noteController=require('../controllers/notesController')
 
 router.post('/',authenticater,noteController.postNote);
 router.get('/',authenticater,noteController.getAllNotes);
+router.get("/starred", authenticater, noteController.getStarredNotes);
+router.get("/search", authenticater, noteController.searchNotes);
 router.patch("/:id", authenticater, noteController.updateNote);
 router.delete("/:id", authenticater, noteController.deleteNote);
 router.patch("/:id/star", authenticater, noteController.toggleStar);
 router.get("/:id", authenticater, noteController.getNoteById);
-router.get("/starred", authenticater, noteController.getStarredNotes);
-router.get("/search", authenticate, noteController.searchNotes);
+
 
 module.exports=router;
