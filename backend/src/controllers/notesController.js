@@ -65,22 +65,26 @@ const updateNote = async (req, res, next) => {
   }
 };
 
-const toggleStar = async (req, res, next) => {
+const updateStarStatus = async (req, res, next) => {
   try {
-    const result = await notesServices.toggleStar(
+    const result = await notesServices.updateStarStatus(
       req.params.id,
-      req.user.id
+      req.user.id,
+      req.body.isStarred
     );
 
     return res.status(200).json({
       success: true,
-      message: "Star status updated",
+      message: `Note ${
+        result.isStarred ? "starred" : "unstarred"
+      } successfully`,
       data: result,
     });
   } catch (error) {
     next(error);
   }
 };
+
 
 const getNoteById = async (req, res, next) => {
   try {
@@ -135,7 +139,7 @@ module.exports = {
   getAllNotes,
   deleteNote,
   updateNote,
-  toggleStar,
+  updateStarStatus,
   getNoteById,
   getStarredNotes,
   searchNotes

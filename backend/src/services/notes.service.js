@@ -160,53 +160,60 @@ try{
         throw error;
     }
 }
+const updateStarStatus = async (noteId, userId, isStarred) => {
+  try {
+    if (typeof isStarred !== "boolean") {
+      const error = new Error("isStarred must be a boolean value");
+      error.statusCode = 400;
+      throw error;
+    }
 
-const toggleStar = async (noteId, userId) => {
-    try{
-  const note = await prisma.note.findFirst({
-    where: {
-      id: noteId,
-      userId,
-    },
-  });
+    const result = await prisma.note.updateMany({
+      where: {
+        id: noteId,
+        userId,
+      },
+      data: {
+        isStarred,
+      },
+    });
 
-  if (!note) {
-    const error = new Error("Note not found");
-    error.statusCode = 404;
+    if (result.count === 0) {
+      const error = new Error("Note not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const updatedNote = await prisma.note.findUnique({
+      where: {
+        id: noteId,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        isStarred: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    logger.info(
+      {
+        noteId,
+        userId,
+        isStarred: updatedNote.isStarred,
+      },
+      "Note star status updated successfully"
+    );
+
+    return updatedNote;
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
     throw error;
   }
-
-  const updatedNote = await prisma.note.update({
-    where: {
-      id: noteId,
-    },
-    data: {
-      isStarred: !note.isStarred,
-    },
-    select: {
-      id: true,
-      title: true,
-      isStarred: true,
-      updatedAt: true,
-    },
-  });
-
-  logger.info(
-    {
-      noteId,
-      userId,
-      isStarred: updatedNote.isStarred,
-    },
-    "Note star status updated"
-  );
-
-  return updatedNote;}
-  catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        throw error;
-    }
 };
 
 const getNoteById = async (noteId, userId) => {
@@ -340,5 +347,5 @@ const searchNotes = async (userId, query) => {
 };
 
 module.exports = {
-    createNote,getAllNotes,deleteNote,updateNote,toggleStar,getNoteById,getStarredNotes,searchNotes
+    createNote,getAllNotes,deleteNote,updateNote,updateStarStatus,getNoteById,getStarredNotes,searchNotes
 }
