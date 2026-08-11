@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-/* ================================
-   GLOBAL
-   ================================ */
-
 * {
   box-sizing: border-box;
 }
@@ -28,11 +24,6 @@ body {
     "Segoe UI",
     sans-serif;
 }
-
-
-/* ================================
-   AUTH INPUT
-   ================================ */
 
 .auth-input {
   width: 100%;
@@ -64,10 +55,6 @@ body {
 }
 
 
-/* ================================
-   PRIMARY BUTTON
-   ================================ */
-
 .primary-button {
   flex: 1;
 
@@ -90,11 +77,6 @@ body {
 .primary-button:hover {
   background: var(--color-primary-hover);
 }
-
-
-/* ================================
-   SECONDARY BUTTON
-   ================================ */
 
 .secondary-button {
   flex: 1;
@@ -121,12 +103,6 @@ body {
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
-
-
-/* ================================
-   BUTTON
-   ================================ */
-
 button {
   cursor: pointer;
 }
