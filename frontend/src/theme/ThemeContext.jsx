@@ -7,14 +7,25 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    const selectedTheme = themes[theme];
+    const selectedTheme = themes[theme] || themes.light;
 
-    Object.entries(selectedTheme).forEach(([property, value]) => {
-      document.documentElement.style.setProperty(property, value);
-    });
+    if (selectedTheme) {
+      Object.entries(selectedTheme).forEach(([property, value]) => {
+        document.documentElement.style.setProperty(property, value);
+      });
+    }
 
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
+
+  //validated that customer can only toggl between light and dark theme like pre defined ones
+  const changeTheme = (newTheme) => {
+    if (themes[newTheme]) {
+      setTheme(newTheme);
+    } else {
+      console.warn(`Invalid theme requested: ${newTheme}`);
+    }
+  };
 
   const toggleTheme = () => {
     setTheme((currentTheme) =>
@@ -26,7 +37,7 @@ export const ThemeProvider = ({ children }) => {
     <ThemeContext.Provider
       value={{
         theme,
-        setTheme,
+        setTheme: changeTheme, 
         toggleTheme,
       }}
     >

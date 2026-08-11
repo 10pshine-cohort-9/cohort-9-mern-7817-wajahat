@@ -114,23 +114,14 @@ const Login = () => {
         password,
       });
 
-      console.log("Login response:", response.data);
 
       setSuccess(
         response.data?.message || "Login successful"
       );
 
       // We will navigate to the notes page here later.
-    } catch (err) {
-      console.error(
-        "Login error:",
-        err.response?.data || err
-      );
-
-      setError(
-        err.response?.data?.message ||
-          "Invalid email or password"
-      );
+    }catch (err) {
+      setError( "Invalid email or password");
     }
   };
 

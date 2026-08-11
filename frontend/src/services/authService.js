@@ -1,17 +1,29 @@
 import api from "../api/axios";
 
-export const registerUser = (userData) => {
-  return api.post("/auth/register", userData);
+export const registerUser = async (userData) => {
+    const response=await api.post("/auth/register",userData);
+    if(response.data?.token){
+        localStorage.setItem("token",response.data.token);
+    }
+    return response;
 };
 
-export const loginUser = (credentials) => {
-  return api.post("/auth/login", credentials);
+export const loginUser =async (credentials) => {
+    const response= await api.post("/auth/login",credentials);
+    if(response.data?.token){
+        localStorage.setItem("token",response.data.token);
+    }
+    return response;
 };
 
 export const getCurrentUser = () => {
   return api.get("/auth/me");
 };
 
-export const logoutuser =() =>{
-    return api.post("/auth/logout");
+export const logoutuser =async () =>{
+    try {
+    return await api.post("/auth/logout");
+} finally{
+    localStorage.removeItem("token");
+}
 }
