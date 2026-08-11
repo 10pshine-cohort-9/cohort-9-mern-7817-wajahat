@@ -9,7 +9,7 @@ router.get("/starred", authenticater, noteController.getStarredNotes);
 router.get("/search", authenticater, noteController.searchNotes);
 router.patch("/:id", authenticater, noteController.updateNote);
 router.delete("/:id", authenticater, noteController.deleteNote);
-router.patch("/:id/star", authenticater, noteController.toggleStar);
+router.patch("/:id/star", authenticater, noteController.updateStarStatus);
 router.get("/:id", authenticater, noteController.getNoteById);
 
 
