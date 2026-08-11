@@ -1,5 +1,4 @@
 import axios from "axios";
-import errorHandler from "../../../backend/src/middlewares/errorHandler";
 
 const api = axios.create({
   baseURL: "http://localhost:3005/api",
