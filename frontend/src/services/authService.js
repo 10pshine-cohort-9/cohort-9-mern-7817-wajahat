@@ -1,29 +1,47 @@
 import api from "../api/axios";
 
+/**
+ * @param {Object} userData
+ * @returns {Promise<Object>}
+ */
 export const registerUser = async (userData) => {
-    const response=await api.post("/auth/register",userData);
-    if(response.data?.token){
-        localStorage.setItem("token",response.data.token);
-    }
-    return response;
+  const response = await api.post("/auth/register", userData);
+  const token = response.data?.data?.token || response.data?.token;
+
+  if (token) {
+    localStorage.setItem("token", token);
+  }
+  return response;
 };
 
-export const loginUser =async (credentials) => {
-    const response= await api.post("/auth/login",credentials);
-    if(response.data?.token){
-        localStorage.setItem("token",response.data.token);
-    }
-    return response;
+/**
+ * @param {Object} credentials
+ * @returns {Promise<Object>}
+ */
+export const loginUser = async (credentials) => {
+  const response = await api.post("/auth/login", credentials);
+  const token = response.data?.data?.token || response.data?.token;
+
+  if (token) {
+    localStorage.setItem("token", token);
+  }
+  return response;
 };
 
+/**
+ * @returns {Promise<Object>}
+ */
 export const getCurrentUser = () => {
   return api.get("/auth/me");
 };
 
-export const logoutuser =async () =>{
-    try {
+/**
+ * @returns {Promise<Object>}
+ */
+export const logoutUser = async () => {
+  try {
     return await api.post("/auth/logout");
-} finally{
+  } finally {
     localStorage.removeItem("token");
-}
-}
+  }
+};

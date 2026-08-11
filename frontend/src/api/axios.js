@@ -8,14 +8,22 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-    (config)=>{
-        const token = localStorage.getItem("token");
-        if(token){
-            config.headers.Authorization=`Bearer ${token}`;
-        }
-        return config;
-    },
-    (error)=>Promise.reject(error)
+  /**
+   * @param {import('axios').InternalAxiosRequestConfig} config
+   * @returns {import('axios').InternalAxiosRequestConfig}
+   */
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  /**
+   * @param {Error} error
+   * @returns {Promise<never>}
+   */
+  (error) => Promise.reject(error)
 );
-export default api;
 
+export default api;
