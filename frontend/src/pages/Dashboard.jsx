@@ -1,8 +1,16 @@
 import React from 'react'
+import Navigation from '../components/layout/Navigation';
 
 const Dashboard = () => {
+
+  const handleLogout=()=>{
+    console.log('logging out')
+  };
   return (
-    <div className='bg-amber-600 text-7xl'>Welcome to main dashboard</div>
+    <div>
+      <Navigation/>
+    </div>
+
   )
 }
 
