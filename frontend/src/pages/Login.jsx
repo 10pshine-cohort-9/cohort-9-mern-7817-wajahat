@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.png";
 import AuthForm from "../components/common/AuthForm";
 import PasswordInput from "../components/common/PasswordInput";
 import { loginUser, registerUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const { login }=useAuth();
   const [isSignup, setIsSignup] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -15,6 +18,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const navigate=useNavigate();
 
   const [signupData, setSignupData] = useState({
     firstName: "",
@@ -109,16 +114,12 @@ const Login = () => {
     }
 
     try {
-      const response = await loginUser({
-        email,
-        password,
-      });
-
-
+      const response = await loginUser(loginData);
+      login(response.data.data.user);
+      navigate('/dashboard')
       setSuccess(
         response.data?.message || "Login successful"
       );
-
       // We will navigate to the notes page here later.
     }catch (err) {
       setError( "Invalid email or password");
