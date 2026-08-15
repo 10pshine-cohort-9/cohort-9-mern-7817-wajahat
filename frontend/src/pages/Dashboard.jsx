@@ -1,21 +1,24 @@
 import Navigation from "../components/layout/Navigation";
+import NotesScreen from "../components/layout/NotesScreen";
 import Topbar from "../components/layout/Topbar";
+import AddNoteButton from "../components/notes/AddNoteButton";
 
 const Dashboard = () => {
+  const handleAddNote=()=>{
+    console.log("Add note clicked")
+  }
   return (
     <div className="flex min-h-screen w-full bg-(--color-background)">
-      {/* Sidebar */}
       <Navigation />
 
-      {/* Everything after sidebar */}
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar />
 
-        <main className="flex-1 p-6 pb-24 md:pb-6">
-          <h1 className="text-2xl font-semibold text-(--color-text)">
-            All Notes
-          </h1>
+        {/* Scrollable notes area */}
+        <main className="min-h-0 flex-1 overflow-y-auto p-6 pb-24 md:p-8 md:pb-8">
+          <NotesScreen />
         </main>
+        <AddNoteButton onClick={handleAddNote} />
       </div>
     </div>
   );
