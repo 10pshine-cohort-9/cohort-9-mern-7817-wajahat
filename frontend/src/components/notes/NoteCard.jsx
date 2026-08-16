@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Star, Trash2 } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 import {
   deleteNote,
   updateStarStatus,
@@ -89,7 +90,9 @@ const NoteCard = ({
       />
       <div className="mt-auto flex items-center justify-between pt-8">
         <span className="text-xs font-medium text-(--color-text-secondary)">
-          {updatedAt}
+          {formatDistanceToNow(new Date(updatedAt), {
+            addSuffix: true,
+          })}
         </span>
         <button
           type="button"
@@ -100,8 +103,7 @@ const NoteCard = ({
           disabled={deleting}
           aria-label="Delete note"
           title="Delete note"
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-(--color-text-secondary) transition hover:bg-red-500/10 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40"
-        >
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-(--color-text-secondary) transition hover:bg-red-500/10 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-40">
           <Trash2 size={18} strokeWidth={1.8} />
         </button>
       </div>

@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("notes");
   const [notesRefreshKey, setNotesRefreshKey] = useState(0);
   const [editingNote, setEditingNote] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const handleAddNote = () => {
     // making sure that editor opens blacnk
     setEditingNote(null);
@@ -44,12 +45,16 @@ const Dashboard = () => {
         onNavigate={handleSectionChange}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar />
+        <Topbar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
         <main className="min-h-0 flex-1 overflow-y-auto p-6 pb-24 md:p-8 md:pb-8">
           {view === "notes" ? (
             <NotesScreen
               key={`${activeSection}-${notesRefreshKey}`}
               section={activeSection}
+              searchQuery={searchQuery}
               onEditNote={handleEditNote}
             />
           ) : (

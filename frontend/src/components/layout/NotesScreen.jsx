@@ -3,16 +3,20 @@ import NoteCard from "../notes/NoteCard";
 import {
   getAllNotes,
   getStarredNotes,
+  searchNotes,
 } from "../../services/notesService";
 import Loader from "../common/Loader";
-const NotesScreen = ({ section = "notes", onEditNote }) => {
+const NotesScreen = ({
+  section = "notes",
+  searchQuery = "",
+  onEditNote,
+}) => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   useEffect(() => {
     const fetchNotes = async () => {
-      //trash is not yet implemented due to api missing for that for now
+      // Trash is not yet implemented due to api missing for that for now
       if (section === "trash") {
         setNotes([]);
         setLoading(false);
@@ -22,12 +26,18 @@ const NotesScreen = ({ section = "notes", onEditNote }) => {
       try {
         setLoading(true);
         setError("");
+
         let response;
-        if (section === "starred") {
+        const query = searchQuery.trim();
+
+        if (query) {
+          response = await searchNotes(query);
+        } else if (section === "starred") {
           response = await getStarredNotes();
         } else {
           response = await getAllNotes();
         }
+
         setNotes(response.data?.data || []);
       } catch (error) {
         console.error("Failed to fetch notes:", error);
@@ -36,8 +46,9 @@ const NotesScreen = ({ section = "notes", onEditNote }) => {
         setLoading(false);
       }
     };
+
     fetchNotes();
-  }, [section]);
+  }, [section, searchQuery]);
   const handleDelete = (noteId) => {
     setNotes((previousNotes) =>
       previousNotes.filter((note) => note.id !== noteId)
@@ -62,13 +73,15 @@ const NotesScreen = ({ section = "notes", onEditNote }) => {
     );
   };
   const getTitle = () => {
+    if (searchQuery.trim()) {
+      return "Search Results";
+    }
     if (section === "starred") {
       return "Starred Notes";
     }
     if (section === "trash") {
       return "Trash";
     }
-
     return "All Notes";
   };
   if (section === "trash") {
@@ -97,15 +110,16 @@ const NotesScreen = ({ section = "notes", onEditNote }) => {
       <section className="w-full px-7">
         <Loader
           message={
-            section === "starred"
-              ? "Finding your starred notes..."
-              : "Opening your notes..."
+            searchQuery.trim()
+              ? "Searching your notes..."
+              : section === "starred"
+                ? "Finding your starred notes..."
+                : "Opening your notes..."
           }
         />
       </section>
     );
   }
-
   if (error) {
     return (
       <section className="w-full px-7">
@@ -130,13 +144,14 @@ const NotesScreen = ({ section = "notes", onEditNote }) => {
           {notes.length} {notes.length === 1 ? "note" : "notes"}
         </p>
       </div>
-
       {notes.length === 0 ? (
         <div className="py-16 text-center">
           <p className="text-sm text-(--color-text-secondary)">
-            {section === "starred"
-              ? "You don't have any starred notes yet."
-              : "You don't have any notes yet."}
+            {searchQuery.trim()
+              ? "No notes found."
+              : section === "starred"
+                ? "You don't have any starred notes yet."
+                : "You don't have any notes yet."}
           </p>
         </div>
       ) : (
@@ -161,4 +176,5 @@ const NotesScreen = ({ section = "notes", onEditNote }) => {
     </section>
   );
 };
+
 export default NotesScreen;
