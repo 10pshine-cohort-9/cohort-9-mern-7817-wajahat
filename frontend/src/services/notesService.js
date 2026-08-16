@@ -1,12 +1,21 @@
 import api from "../api/axios";
 
+const handleRequest = async (request) => {
+  try {
+    return await request();
+  } catch (error) {
+    console.error("Notes API request failed:", error);
+    throw error;
+  }
+};
+
 /**
  * Create a new note
  * @param {Object} noteData
  * @returns {Promise<Object>}
  */
 export const createNote = async (noteData) => {
-  return await api.post("/notes", noteData);
+  return await handleRequest(() => api.post("/notes", noteData));
 };
 
 /**
@@ -14,7 +23,7 @@ export const createNote = async (noteData) => {
  * @returns {Promise<Object>}
  */
 export const getAllNotes = async () => {
-  return await api.get("/notes");
+  return await handleRequest(() => api.get("/notes"));
 };
 
 /**
@@ -23,7 +32,7 @@ export const getAllNotes = async () => {
  * @returns {Promise<Object>}
  */
 export const getNoteById = async (noteId) => {
-  return await api.get(`/notes/${noteId}`);
+  return await handleRequest(() => api.get(`/notes/${noteId}`));
 };
 
 /**
@@ -33,7 +42,9 @@ export const getNoteById = async (noteId) => {
  * @returns {Promise<Object>}
  */
 export const updateNote = async (noteId, noteData) => {
-  return await api.patch(`/notes/${noteId}`, noteData);
+  return await handleRequest(() =>
+    api.patch(`/notes/${noteId}`, noteData)
+  );
 };
 
 /**
@@ -42,7 +53,9 @@ export const updateNote = async (noteId, noteData) => {
  * @returns {Promise<Object>}
  */
 export const deleteNote = async (noteId) => {
-  return await api.delete(`/notes/${noteId}`);
+  return await handleRequest(() =>
+    api.delete(`/notes/${noteId}`)
+  );
 };
 
 /**
@@ -52,9 +65,11 @@ export const deleteNote = async (noteId) => {
  * @returns {Promise<Object>}
  */
 export const updateStarStatus = async (noteId, isStarred) => {
-  return await api.patch(`/notes/${noteId}/star`, {
-    isStarred,
-  });
+  return await handleRequest(() =>
+    api.patch(`/notes/${noteId}/star`, {
+      isStarred,
+    })
+  );
 };
 
 /**
@@ -62,7 +77,9 @@ export const updateStarStatus = async (noteId, isStarred) => {
  * @returns {Promise<Object>}
  */
 export const getStarredNotes = async () => {
-  return await api.get("/notes/starred");
+  return await handleRequest(() =>
+    api.get("/notes/starred")
+  );
 };
 
 /**
@@ -71,9 +88,11 @@ export const getStarredNotes = async () => {
  * @returns {Promise<Object>}
  */
 export const searchNotes = async (query) => {
-  return await api.get("/notes/search", {
-    params: {
-      q: query,
-    },
-  });
+  return await handleRequest(() =>
+    api.get("/notes/search", {
+      params: {
+        q: query,
+      },
+    })
+  );
 };
