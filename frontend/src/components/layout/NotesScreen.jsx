@@ -5,28 +5,24 @@ import {
   getStarredNotes,
 } from "../../services/notesService";
 import Loader from "../common/Loader";
-
-const NotesScreen = ({ section = "notes" }) => {
+const NotesScreen = ({ section = "notes", onEditNote }) => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchNotes = async () => {
-      // Trash is not implemented yet
+      //trash is not yet implemented due to api missing for that for now
       if (section === "trash") {
         setNotes([]);
         setLoading(false);
         setError("");
         return;
       }
-
       try {
         setLoading(true);
         setError("");
-
         let response;
-
         if (section === "starred") {
           response = await getStarredNotes();
         } else {
@@ -42,21 +38,16 @@ const NotesScreen = ({ section = "notes" }) => {
     };
     fetchNotes();
   }, [section]);
-  // DELETE NOTE
   const handleDelete = (noteId) => {
     setNotes((previousNotes) =>
       previousNotes.filter((note) => note.id !== noteId)
     );
   };
-  // STAR / UNSTAR NOTE
   const handleStarChange = (noteId, updatedNote) => {
-    // If viewing Starred Notes and the note
-    // gets unstarred, remove it immediately.
     if (section === "starred" && !updatedNote.isStarred) {
       setNotes((previousNotes) =>
         previousNotes.filter((note) => note.id !== noteId)
       );
-
       return;
     }
     setNotes((previousNotes) =>
@@ -70,18 +61,16 @@ const NotesScreen = ({ section = "notes" }) => {
       )
     );
   };
-  //assigning titles to pages
   const getTitle = () => {
     if (section === "starred") {
       return "Starred Notes";
     }
-
     if (section === "trash") {
       return "Trash";
     }
+
     return "All Notes";
   };
-  //trash is not yet implemented
   if (section === "trash") {
     return (
       <section className="w-full px-7">
@@ -92,8 +81,12 @@ const NotesScreen = ({ section = "notes" }) => {
         </div>
 
         <div className="py-16 text-center">
+          <p className="text-sm font-medium text-(--color-text-secondary)">
+            Trash is coming soon.
+          </p>
+
           <p className="mt-2 text-xs text-(--color-text-secondary)">
-            Deleted notes will appear here in future.
+            Deleted notes will appear here in a future update.
           </p>
         </div>
       </section>
@@ -112,6 +105,7 @@ const NotesScreen = ({ section = "notes" }) => {
       </section>
     );
   }
+
   if (error) {
     return (
       <section className="w-full px-7">
@@ -136,6 +130,7 @@ const NotesScreen = ({ section = "notes" }) => {
           {notes.length} {notes.length === 1 ? "note" : "notes"}
         </p>
       </div>
+
       {notes.length === 0 ? (
         <div className="py-16 text-center">
           <p className="text-sm text-(--color-text-secondary)">
@@ -158,6 +153,7 @@ const NotesScreen = ({ section = "notes" }) => {
               onStarChange={(updatedNote) =>
                 handleStarChange(note.id, updatedNote)
               }
+              onClick={() => onEditNote?.(note)}
             />
           ))}
         </div>

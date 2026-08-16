@@ -4,7 +4,6 @@ import {
   deleteNote,
   updateStarStatus,
 } from "../../services/notesService";
-
 const NoteCard = ({
   id,
   title,
@@ -13,6 +12,7 @@ const NoteCard = ({
   isStarred = false,
   onDelete,
   onStarChange,
+  onClick,
 }) => {
   const [deleting, setDeleting] = useState(false);
   const [updatingStar, setUpdatingStar] = useState(false);
@@ -50,17 +50,21 @@ const NoteCard = ({
       setDeleting(false);
     }
   };
-
   return (
-    <article className="flex min-h-51.25 flex-col rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(0,0,0,0.08)]">
+    <article
+      onClick={onClick}
+      className="flex min-h-51.25 cursor-pointer flex-col rounded-2xl border border-(--color-border) bg-(--color-surface) p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(0,0,0,0.08)]"
+    >
       <div className="flex items-start justify-between gap-4">
         <h3 className="line-clamp-1 text-base font-bold tracking-[-0.01em] text-(--color-primary)">
           {title}
         </h3>
-        {/* Star Button */}
         <button
           type="button"
-          onClick={handleStarToggle}
+          onClick={(event) => {
+            event.stopPropagation();
+            handleStarToggle();
+          }}
           disabled={updatingStar}
           aria-label={isStarred ? "Unstar note" : "Star note"}
           title={isStarred ? "Unstar note" : "Star note"}
@@ -89,7 +93,10 @@ const NoteCard = ({
         </span>
         <button
           type="button"
-          onClick={handleDelete}
+          onClick={(event) => {
+            event.stopPropagation();
+            handleDelete();
+          }}
           disabled={deleting}
           aria-label="Delete note"
           title="Delete note"
@@ -101,5 +108,4 @@ const NoteCard = ({
     </article>
   );
 };
-
 export default NoteCard;
