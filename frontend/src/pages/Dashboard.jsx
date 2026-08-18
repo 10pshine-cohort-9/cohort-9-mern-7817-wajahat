@@ -37,6 +37,9 @@ const Dashboard = () => {
     setView("notes");
     setEditingNote(null);
   };
+ const handleMenuClick=()=>{
+  console.log("Opening profile menu")
+ }
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-(--color-background)">
@@ -46,6 +49,7 @@ const Dashboard = () => {
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
+          onMenuClick={handleMenuClick}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />

@@ -20,11 +20,16 @@ export const registerUser = async (userData) => {
  */
 export const loginUser = async (credentials) => {
   const response = await api.post("/auth/login", credentials);
-  const token = response.data?.data?.token || response.data?.token;
 
-  if (token) {
-    localStorage.setItem("token", token);
+  const user = response.data?.data?.user;
+  const token = response.data?.data?.token;
+
+  if (!user || !token) {
+    throw new Error("Invalid login response.");
   }
+
+  localStorage.setItem("token", token);
+
   return response;
 };
 

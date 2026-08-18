@@ -15,40 +15,58 @@ const NotesScreen = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   useEffect(() => {
-    const fetchNotes = async () => {
-      // Trash is not yet implemented due to api missing for that for now
-      if (section === "trash") {
+  let isActive = true;
+
+  const fetchNotes = async () => {
+    // Trash is not yet implemented due to api missing for that for now
+    if (section === "trash") {
+      if (isActive) {
         setNotes([]);
         setLoading(false);
         setError("");
-        return;
       }
-      try {
+      return;
+    }
+
+    try {
+      if (isActive) {
         setLoading(true);
         setError("");
+      }
 
-        let response;
-        const query = searchQuery.trim();
+      let response;
+      const query = searchQuery.trim();
 
-        if (query) {
-          response = await searchNotes(query);
-        } else if (section === "starred") {
-          response = await getStarredNotes();
-        } else {
-          response = await getAllNotes();
-        }
+      if (query) {
+        response = await searchNotes(query);
+      } else if (section === "starred") {
+        response = await getStarredNotes();
+      } else {
+        response = await getAllNotes();
+      }
 
+      if (isActive) {
         setNotes(response.data?.data || []);
-      } catch (error) {
-        console.error("Failed to fetch notes:", error);
+      }
+    } catch (error) {
+      console.error("Failed to fetch notes:", error);
+
+      if (isActive) {
         setError("Failed to load notes.");
-      } finally {
+      }
+    } finally {
+      if (isActive) {
         setLoading(false);
       }
-    };
+    }
+  };
 
-    fetchNotes();
-  }, [section, searchQuery]);
+  fetchNotes();
+
+  return () => {
+    isActive = false;
+  };
+}, [section, searchQuery]);
   const handleDelete = (noteId) => {
     setNotes((previousNotes) =>
       previousNotes.filter((note) => note.id !== noteId)

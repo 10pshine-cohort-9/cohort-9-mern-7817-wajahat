@@ -3,7 +3,7 @@ import logo from "../../assets/logo.png";
 import { useTheme } from "../../theme/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 
-const Topbar = ({ onMenuClick, searchQuery,onSearchChange}) => {
+const Topbar = ({ onMenuClick, searchQuery, onSearchChange }) => {
   const { theme, toggleTheme } = useTheme();
   const { user } = useAuth();
 
@@ -25,12 +25,13 @@ const Topbar = ({ onMenuClick, searchQuery,onSearchChange}) => {
             type="text"
             placeholder="Search notes..."
             value={searchQuery}
-            onChange={(e)=>{
-              onSearchChange(e.target.value)
+            onChange={(e) => {
+              onSearchChange(e.target.value);
             }}
             className="h-12 w-full rounded-full border border-(--color-border) bg-(--color-background) pl-13 pr-5 text-base text-(--color-text) outline-none transition placeholder:text-(--color-text-secondary) focus:border-(--color-primary)"
           />
         </div>
+
         <div className="ml-auto flex shrink-0 items-center gap-4">
           <button
             type="button"
@@ -44,6 +45,7 @@ const Topbar = ({ onMenuClick, searchQuery,onSearchChange}) => {
               <Moon size={20} strokeWidth={1.7} />
             )}
           </button>
+
           <div
             className="flex h-11 w-11 items-center justify-center rounded-full bg-(--color-primary) text-sm font-semibold text-white"
             title={`${user?.firstName || ""} ${user?.lastName || ""}`.trim()}
@@ -60,28 +62,31 @@ const Topbar = ({ onMenuClick, searchQuery,onSearchChange}) => {
             alt="Noto logo"
             className="h-10 w-10 object-contain"
           />
+
           <span className="text-2xl font-semibold tracking-[0.15em] text-(--color-text)">
             NOTO
           </span>
         </div>
 
-        <div className="flex h-14  items-center gap-2 px-4 py-8">
+        <div className="flex h-14 items-center gap-2 px-4 py-8">
           <div className="relative min-w-0 flex-1">
             <Search
               size={16}
               strokeWidth={1.7}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-secondary)"
             />
+
             <input
               type="text"
               placeholder="Search notes..."
               value={searchQuery}
-              onChange={(e)=>{
-                onSearchChange(e.target.value)
+              onChange={(e) => {
+                onSearchChange(e.target.value);
               }}
               className="h-10 w-full rounded-full border border-(--color-border) bg-(--color-background) pl-9 pr-3 text-sm text-(--color-text) outline-none placeholder:text-(--color-text-secondary) focus:border-(--color-primary)"
             />
           </div>
+
           <button
             type="button"
             onClick={toggleTheme}
@@ -94,10 +99,11 @@ const Topbar = ({ onMenuClick, searchQuery,onSearchChange}) => {
               <Moon size={19} strokeWidth={1.7} />
             )}
           </button>
+
           <button
             type="button"
             onClick={onMenuClick}
-            aria-label="Open menu"
+            aria-label="Open profile"
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-(--color-text) transition hover:bg-(--color-background)"
           >
             <Menu size={21} strokeWidth={1.8} />
@@ -107,4 +113,5 @@ const Topbar = ({ onMenuClick, searchQuery,onSearchChange}) => {
     </header>
   );
 };
+
 export default Topbar;

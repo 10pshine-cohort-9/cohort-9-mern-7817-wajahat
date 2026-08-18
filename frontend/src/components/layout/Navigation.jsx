@@ -19,11 +19,7 @@ const items = [
     name: "Starred",
     icon: Star,
   },
-  {
-    id: "trash",
-    name: "Trash",
-    icon: Trash2,
-  },
+  
 ];
 
 const Navigation = ({ activeItem, onNavigate }) => {
