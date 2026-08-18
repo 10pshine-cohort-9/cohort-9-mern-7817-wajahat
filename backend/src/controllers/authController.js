@@ -16,10 +16,18 @@ const register=async(req,res,next)=>{
 const login = async (req, res, next) => {
   try {
     const result = await authService.loginUser(req.body);
+    res.cookie("token", result.token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     return res.status(200).json({
       success: true,
       message: "user logged in successfully",
-      data: result,
+      data: {
+        user: result.user,
+      },
     });
   } catch (error) {
     next(error);

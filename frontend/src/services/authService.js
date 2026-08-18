@@ -17,19 +17,14 @@ export const registerUser = async (userData) => {
 /**
  * @param {Object} credentials
  * @returns {Promise<Object>}
+ * 
  */
 export const loginUser = async (credentials) => {
   const response = await api.post("/auth/login", credentials);
-
   const user = response.data?.data?.user;
-  const token = response.data?.data?.token;
-
-  if (!user || !token) {
+  if (!user) {
     throw new Error("Invalid login response.");
   }
-
-  localStorage.setItem("token", token);
-
   return response;
 };
 

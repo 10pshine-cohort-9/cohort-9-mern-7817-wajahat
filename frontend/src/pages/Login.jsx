@@ -114,12 +114,8 @@ const Login = () => {
     }
 
     try {
-      //made the frontedn defensive by adding few different ways of finding user data
       const response = await loginUser(loginData);
-      const user =
-        response.data?.data?.user ||
-        response.data?.user ||
-        response.data?.data;
+      const user = response.data?.data?.user;
       if (!user) {
         throw new Error("Invalid login response.");
       }
@@ -447,8 +443,8 @@ const Login = () => {
               <span
                 key={index}
                 className={`h-1.5 rounded-full transition-all duration-500 ${index === messageIndex
-                    ? "w-7 bg-(--color-primary)]"
-                    : "w-1.5 bg-(--color-border)]"
+                  ? "w-7 bg-(--color-primary)]"
+                  : "w-1.5 bg-(--color-border)]"
                   }`}
               />
             ))}
