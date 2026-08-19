@@ -39,9 +39,5 @@ export const getCurrentUser = () => {
  * @returns {Promise<Object>}
  */
 export const logoutUser = async () => {
-  try {
     return await api.post("/auth/logout");
-  } finally {
-    localStorage.removeItem("token");
-  }
 };
