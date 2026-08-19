@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import logo from "../assets/logo.png";
 import AuthForm from "../components/common/AuthForm";
 import PasswordInput from "../components/common/PasswordInput";
 import { loginUser, registerUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const { login } = useAuth();
   const [isSignup, setIsSignup] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -15,6 +18,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const [signupData, setSignupData] = useState({
     firstName: "",
@@ -109,19 +114,18 @@ const Login = () => {
     }
 
     try {
-      const response = await loginUser({
-        email,
-        password,
-      });
-
-
+      const response = await loginUser(loginData);
+      const user = response.data?.data?.user;
+      if (!user) {
+        throw new Error("Invalid login response.");
+      }
+      login(user);
+      navigate("/dashboard");
       setSuccess(
         response.data?.message || "Login successful"
       );
-
-      // We will navigate to the notes page here later.
-    }catch (err) {
-      setError( "Invalid email or password");
+    } catch (err) {
+      setError("Invalid email or password");
     }
   };
 
@@ -163,7 +167,7 @@ const Login = () => {
 
       setSuccess(
         response.data?.message ||
-          "Account created successfully. Please login."
+        "Account created successfully. Please login."
       );
     } catch (err) {
       console.error(
@@ -173,7 +177,7 @@ const Login = () => {
 
       setError(
         err.response?.data?.message ||
-          "Unable to create account"
+        "Unable to create account"
       );
     }
   };
@@ -185,10 +189,10 @@ const Login = () => {
 
   return (
     <main className="grid min-h-screen grid-cols-1 bg-(--color-background) md:grid-cols-2">
-        {/* left section */}
+      {/* left section */}
       <section className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
         <div className="w-full max-w-90 rounded-[28px] border border-(--color-border) bg-(--color-surface) px-7 py-9 shadow-[0_10px_35px_rgba(0,0,0,0.08)] sm:px-8">
-         
+
           <div className="mb-8 flex flex-col items-center">
             <div className="flex items-center gap-2">
               <img
@@ -246,7 +250,7 @@ const Login = () => {
                   <label className="flex items-center gap-2 px-1 text-[11px] text-(--color-text-secondary)]">
                     <input
                       type="checkbox"
-                      className="accent-(--color-primary)]"/>
+                      className="accent-(--color-primary)]" />
                     Remember me
                   </label>
                 </>
@@ -438,11 +442,10 @@ const Login = () => {
             {messages.map((_, index) => (
               <span
                 key={index}
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  index === messageIndex
-                    ? "w-7 bg-(--color-primary)]"
-                    : "w-1.5 bg-(--color-border)]"
-                }`}
+                className={`h-1.5 rounded-full transition-all duration-500 ${index === messageIndex
+                  ? "w-7 bg-(--color-primary)]"
+                  : "w-1.5 bg-(--color-border)]"
+                  }`}
               />
             ))}
           </div>
