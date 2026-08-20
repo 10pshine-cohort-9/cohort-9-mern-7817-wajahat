@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "node src/server.js",
-    "test": "jest",
+    "test": "mocha \"src/tests/unit/**/*.test.js\"",
     "test:unit": "mocha \"src/tests/unit/**/*.test.js\"",
-    "test:coverage": "jest --coverage",
+    "test:coverage": "nyc --reporter=lcov --reporter=text mocha \"src/tests/unit/**/*.test.js\"",
     "sonar": "dotenv -e .env -- sonar-scanner-npm",
     "prisma:generate": "prisma generate",
     "postinstall": "prisma generate"
