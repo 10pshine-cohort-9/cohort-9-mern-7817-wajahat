@@ -4,6 +4,7 @@ import Topbar from "../components/layout/Topbar";
 import NotesScreen from "../components/layout/NotesScreen";
 import NoteEditor from "../components/notes/NoteEditor";
 import AddNoteButton from "../components/notes/AddNoteButton";
+import Profile from "../pages/Profile";
 
 const Dashboard = () => {
   const [view, setView] = useState("notes");
@@ -11,6 +12,7 @@ const Dashboard = () => {
   const [notesRefreshKey, setNotesRefreshKey] = useState(0);
   const [editingNote, setEditingNote] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
   const handleAddNote = () => {
     // making sure that editor opens blacnk
     setEditingNote(null);
@@ -37,10 +39,6 @@ const Dashboard = () => {
     setView("notes");
     setEditingNote(null);
   };
- const handleMenuClick=()=>{
-  console.log("Opening profile menu")
- }
-
   return (
     <div className="flex h-screen w-full overflow-hidden bg-(--color-background)">
       <Navigation
@@ -49,9 +47,12 @@ const Dashboard = () => {
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
-          onMenuClick={handleMenuClick}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onProfileClick={() => {
+            console.log("PROFILE BUTTON CONNECTED");
+            setProfileOpen(true);
+          }}
         />
         <main className="min-h-0 flex-1 overflow-y-auto p-6 pb-24 md:p-8 md:pb-8">
           {view === "notes" ? (
@@ -73,6 +74,11 @@ const Dashboard = () => {
           <AddNoteButton onClick={handleAddNote} />
         )}
       </div>
+      {profileOpen && (
+        <Profile
+          onClose={() => setProfileOpen(false)}
+        />
+      )}
     </div>
   );
 };
