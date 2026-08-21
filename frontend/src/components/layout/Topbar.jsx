@@ -3,7 +3,11 @@ import logo from "../../assets/logo.png";
 import { useTheme } from "../../theme/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 
-const Topbar = ({ onMenuClick, searchQuery, onSearchChange }) => {
+const Topbar = ({
+  searchQuery,
+  onSearchChange,
+  onProfileClick,
+}) => {
   const { theme, toggleTheme } = useTheme();
   const { user } = useAuth();
 
@@ -13,12 +17,11 @@ const Topbar = ({ onMenuClick, searchQuery, onSearchChange }) => {
   return (
     <header className="w-full shrink-0 border-b border-(--color-border) bg-(--color-surface)">
       <div className="hidden h-20 items-center gap-6 px-8 md:flex">
-        {/* Search */}
         <div className="relative w-full max-w-3xl py-15">
           <Search
             size={20}
             strokeWidth={1.7}
-            className="absolute left-5 top-1/2 -translate-y-1/2 text-(--color-text-secondary) "
+            className="absolute left-5 top-1/2 -translate-y-1/2 text-(--color-text-secondary)"
           />
 
           <input
@@ -46,12 +49,15 @@ const Topbar = ({ onMenuClick, searchQuery, onSearchChange }) => {
             )}
           </button>
 
-          <div
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-(--color-primary) text-sm font-semibold text-white"
+          <button
+            type="button"
+            onClick={onProfileClick}
+            aria-label="Open profile"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-(--color-primary) text-sm font-semibold text-white transition hover:opacity-90"
             title={`${user?.firstName || ""} ${user?.lastName || ""}`.trim()}
           >
             {userInitial}
-          </div>
+          </button>
         </div>
       </div>
 
@@ -102,7 +108,7 @@ const Topbar = ({ onMenuClick, searchQuery, onSearchChange }) => {
 
           <button
             type="button"
-            onClick={onMenuClick}
+            onClick={onProfileClick}
             aria-label="Open profile"
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-(--color-text) transition hover:bg-(--color-background)"
           >

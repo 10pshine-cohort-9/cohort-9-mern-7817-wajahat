@@ -2,6 +2,7 @@ const express = require('express');
 const cookie_parser=require('cookie-parser')
 const requestLogger = require("./middlewares/requestLogger");
 const app = express();
+app.disable('x-powered-by');
 const cors=require('cors');
 const authRoutes=require('./routes/authRoutes')
 const errorhandler=require('./middlewares/errorHandler')

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
+import Profile from "../pages/Profile";
 import Dashboard from "../pages/Dashboard";
 import { useAuth } from "../context/AuthContext";
 
@@ -39,6 +40,10 @@ const AppRoutes = () => {
               <Navigate to="/login" replace />
             )
           }
+        />
+        <Route
+          path="/profile"
+          element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />}
         />
       </Routes>
     </BrowserRouter>
