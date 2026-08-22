@@ -30,12 +30,15 @@ const Login = () => {
 
   const messages = [
     {
+      id: "save-thoughts",
       subtitle: "Save the thoughts that actually matter.",
     },
     {
+      id: "refine-ideas",
       subtitle: "Turn rough ideas into something worth keeping.",
     },
     {
+      id: "stay-organized",
       subtitle: "Keep your ideas organized, simple, and close.",
     },
   ];
@@ -439,9 +442,9 @@ const Login = () => {
 
           {/* Animation indicators */}
           <div className="mt-7 flex gap-2">
-            {messages.map((_, index) => (
+            {messages.map((message, index) => (
               <span
-                key={index}
+                key={message.id}
                 className={`h-1.5 rounded-full transition-all duration-500 ${index === messageIndex
                   ? "w-7 bg-(--color-primary)]"
                   : "w-1.5 bg-(--color-border)]"

@@ -22,7 +22,7 @@ describe("notesController", () => {
   afterEach(() => {
     sinon.restore();
   });
-//new note creation
+  //new note creation
   describe("postNote()", () => {
     it("should respond 201 with the created note on success", async () => {
       req.body = { title: "Test", content: "Body" };
@@ -31,18 +31,28 @@ describe("notesController", () => {
 
       await notesController.postNote(req, res, next);
 
-      sinon.assert.calledOnceWithMatch(notesService.createNote, {
-        title: "Test",
-        content: "Body",
-        userId,
-      });
-      sinon.assert.calledOnceWithExactly(res.status, 201);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "note created successfully",
-        data: serviceResult,
-      });
-      sinon.assert.notCalled(next);
+      expect(notesService.createNote.calledOnce).to.be.true;
+      expect(
+        notesService.createNote.calledWithMatch({
+          title: "Test",
+          content: "Body",
+          userId,
+        })
+      ).to.be.true;
+
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(201)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "note created successfully",
+          data: serviceResult,
+        })
+      ).to.be.true;
+
+      expect(next.called).to.be.false;
     });
 
     it("should attach req.user.id as userId even if body sends a different one", async () => {
@@ -62,11 +72,13 @@ describe("notesController", () => {
 
       await notesController.postNote(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
-      sinon.assert.notCalled(res.status);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
+      expect(res.status.called).to.be.false;
     });
   });
-//get all notes
+
+  //get all notes
   describe("getAllNotes()", () => {
     it("should respond 200 with the user's notes on success", async () => {
       const notes = [{ id: "note-1" }, { id: "note-2" }];
@@ -74,13 +86,20 @@ describe("notesController", () => {
 
       await notesController.getAllNotes(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(notesService.getAllNotes, userId);
-      sinon.assert.calledOnceWithExactly(res.status, 200);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "notes fetched successfully",
-        data: notes,
-      });
+      expect(notesService.getAllNotes.calledOnce).to.be.true;
+      expect(notesService.getAllNotes.calledWithExactly(userId)).to.be.true;
+
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(200)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "notes fetched successfully",
+          data: notes,
+        })
+      ).to.be.true;
     });
 
     it("should call next(error) when getAllNotes throws", async () => {
@@ -89,10 +108,12 @@ describe("notesController", () => {
 
       await notesController.getAllNotes(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
     });
   });
-//get one note by id
+
+  //get one note by id
   describe("getNoteById()", () => {
     it("should respond 200 with the note on success", async () => {
       req.params.id = "note-1";
@@ -101,13 +122,20 @@ describe("notesController", () => {
 
       await notesController.getNoteById(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(notesService.getNoteById, "note-1", userId);
-      sinon.assert.calledOnceWithExactly(res.status, 200);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "Note fetched successfully",
-        data: note,
-      });
+      expect(notesService.getNoteById.calledOnce).to.be.true;
+      expect(notesService.getNoteById.calledWithExactly("note-1", userId)).to.be.true;
+
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(200)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "Note fetched successfully",
+          data: note,
+        })
+      ).to.be.true;
     });
 
     it("should call next(error) with 404 when the note is not found", async () => {
@@ -118,11 +146,13 @@ describe("notesController", () => {
 
       await notesController.getNoteById(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
-      sinon.assert.notCalled(res.status);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
+      expect(res.status.called).to.be.false;
     });
   });
-//update note
+
+  //update note
   describe("updateNote()", () => {
     it("should respond 200 with the updated note on success", async () => {
       req.params.id = "note-1";
@@ -132,18 +162,22 @@ describe("notesController", () => {
 
       await notesController.updateNote(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(
-        notesService.updateNote,
-        "note-1",
-        userId,
-        req.body
-      );
-      sinon.assert.calledOnceWithExactly(res.status, 200);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "Note updated successfully",
-        data: updatedNote,
-      });
+      expect(notesService.updateNote.calledOnce).to.be.true;
+      expect(
+        notesService.updateNote.calledWithExactly("note-1", userId, req.body)
+      ).to.be.true;
+
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(200)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "Note updated successfully",
+          data: updatedNote,
+        })
+      ).to.be.true;
     });
 
     it("should call next(error) with 404 when the note is not found", async () => {
@@ -154,10 +188,12 @@ describe("notesController", () => {
 
       await notesController.updateNote(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
     });
   });
-  //delete node
+
+  //delete note
   describe("deleteNote()", () => {
     it("should respond 200 with the service message on success", async () => {
       req.params.id = "note-1";
@@ -165,12 +201,19 @@ describe("notesController", () => {
 
       await notesController.deleteNote(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(notesService.deleteNote, "note-1", userId);
-      sinon.assert.calledOnceWithExactly(res.status, 200);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "Note deleted successfully",
-      });
+      expect(notesService.deleteNote.calledOnce).to.be.true;
+      expect(notesService.deleteNote.calledWithExactly("note-1", userId)).to.be.true;
+
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(200)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "Note deleted successfully",
+        })
+      ).to.be.true;
     });
 
     it("should call next(error) with 404 when the note is not found", async () => {
@@ -181,10 +224,12 @@ describe("notesController", () => {
 
       await notesController.deleteNote(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
     });
   });
-//update stars
+
+  //update stars
   describe("updateStarStatus()", () => {
     it('should respond with "starred" message when isStarred is true', async () => {
       req.params.id = "note-1";
@@ -194,17 +239,18 @@ describe("notesController", () => {
 
       await notesController.updateStarStatus(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(
-        notesService.updateStarStatus,
-        "note-1",
-        userId,
-        true
-      );
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "Note starred successfully",
-        data: updatedNote,
-      });
+      expect(notesService.updateStarStatus.calledOnce).to.be.true;
+      expect(
+        notesService.updateStarStatus.calledWithExactly("note-1", userId, true)
+      ).to.be.true;
+
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "Note starred successfully",
+          data: updatedNote,
+        })
+      ).to.be.true;
     });
 
     it('should respond with "unstarred" message when isStarred is false', async () => {
@@ -215,11 +261,13 @@ describe("notesController", () => {
 
       await notesController.updateStarStatus(req, res, next);
 
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "Note unstarred successfully",
-        data: updatedNote,
-      });
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "Note unstarred successfully",
+          data: updatedNote,
+        })
+      ).to.be.true;
     });
 
     it("should call next(error) when isStarred is not a boolean", async () => {
@@ -231,7 +279,8 @@ describe("notesController", () => {
 
       await notesController.updateStarStatus(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
     });
 
     it("should call next(error) with 404 when the note is not found", async () => {
@@ -243,10 +292,12 @@ describe("notesController", () => {
 
       await notesController.updateStarStatus(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
     });
   });
-//get starred notes
+
+  //get starred notes
   describe("getStarredNotes()", () => {
     it("should respond 200 with only starred notes", async () => {
       const starred = [{ id: "note-1", isStarred: true }];
@@ -254,12 +305,16 @@ describe("notesController", () => {
 
       await notesController.getStarredNotes(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(notesService.getStarredNotes, userId);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "Starred notes fetched successfully",
-        data: starred,
-      });
+      expect(notesService.getStarredNotes.calledOnce).to.be.true;
+      expect(notesService.getStarredNotes.calledWithExactly(userId)).to.be.true;
+
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "Starred notes fetched successfully",
+          data: starred,
+        })
+      ).to.be.true;
     });
 
     it("should call next(error) when getStarredNotes throws", async () => {
@@ -268,9 +323,11 @@ describe("notesController", () => {
 
       await notesController.getStarredNotes(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
     });
   });
+
   //search notes
   describe("searchNotes()", () => {
     it("should respond 200 with search results using the query param", async () => {
@@ -280,12 +337,16 @@ describe("notesController", () => {
 
       await notesController.searchNotes(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(notesService.searchNotes, userId, "grocery");
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "Search completed successfully",
-        data: results,
-      });
+      expect(notesService.searchNotes.calledOnce).to.be.true;
+      expect(notesService.searchNotes.calledWithExactly(userId, "grocery")).to.be.true;
+
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "Search completed successfully",
+          data: results,
+        })
+      ).to.be.true;
     });
 
     it("should call next(error) with 400 when the query is missing", async () => {
@@ -296,7 +357,8 @@ describe("notesController", () => {
 
       await notesController.searchNotes(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
     });
 
     it("should call next(error) when searchNotes throws a database error", async () => {
@@ -306,7 +368,8 @@ describe("notesController", () => {
 
       await notesController.searchNotes(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
     });
   });
 });

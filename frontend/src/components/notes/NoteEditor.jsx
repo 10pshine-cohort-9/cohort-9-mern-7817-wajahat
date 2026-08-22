@@ -8,7 +8,6 @@ import {
   createNote,
   updateNote,
 } from "../../services/notesService";
-
 const NoteEditor = ({ note = null, onCancel, onNoteCreated }) => {
   const [title, setTitle] = useState(note?.title || "");
   const [saving, setSaving] = useState(false);
@@ -85,6 +84,12 @@ const NoteEditor = ({ note = null, onCancel, onNoteCreated }) => {
       setSaving(false);
     }
   };
+  let saveButtonLabel = "Save Note";
+  if (saving) {
+    saveButtonLabel = isEditing ? "Updating..." : "Saving...";
+  } else if (isEditing) {
+    saveButtonLabel = "Update Note";
+  }
   return (
     <section className="mx-auto w-full max-w-5xl px-2 md:px-4">
       <div className="mb-6 flex items-center justify-between">
@@ -102,8 +107,7 @@ const NoteEditor = ({ note = null, onCancel, onNoteCreated }) => {
           disabled={saving}
           className="flex items-center gap-2 rounded-xl bg-(--color-primary) px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-(--color-primary-hover) disabled:cursor-not-allowed disabled:opacity-60">
           <Save size={17} strokeWidth={1.8} />
-          {saving
-            ? isEditing ? "Updating..." : "Saving..." : isEditing ? "Update Note" : "Save Note"}
+            {saveButtonLabel}
         </button>
       </div>
       {error && (

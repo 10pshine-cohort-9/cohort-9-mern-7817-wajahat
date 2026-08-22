@@ -38,14 +38,22 @@ describe("authController", () => {
 
       await authController.register(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(authService.registerUser, req.body);
-      sinon.assert.calledOnceWithExactly(res.status, 201);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "User registered successfully",
-        data: serviceResult,
-      });
-      sinon.assert.notCalled(next);
+      expect(authService.registerUser.calledOnce).to.be.true;
+      expect(authService.registerUser.calledWithExactly(req.body)).to.be.true;
+
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(201)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "User registered successfully",
+          data: serviceResult,
+        })
+      ).to.be.true;
+
+      expect(next.called).to.be.false;
     });
 
     it("should call next(error) when registerUser throws", async () => {
@@ -55,9 +63,10 @@ describe("authController", () => {
 
       await authController.register(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
-      sinon.assert.notCalled(res.status);
-      sinon.assert.notCalled(res.json);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
+      expect(res.status.called).to.be.false;
+      expect(res.json.called).to.be.false;
     });
   });
   //login
@@ -72,8 +81,10 @@ describe("authController", () => {
 
       await authController.login(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(authService.loginUser, req.body);
-      sinon.assert.calledOnce(res.cookie);
+      expect(authService.loginUser.calledOnce).to.be.true;
+      expect(authService.loginUser.calledWithExactly(req.body)).to.be.true;
+
+      expect(res.cookie.calledOnce).to.be.true;
 
       const [cookieName, cookieValue, cookieOptions] = res.cookie.firstCall.args;
       expect(cookieName).to.equal("token");
@@ -85,12 +96,17 @@ describe("authController", () => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      sinon.assert.calledOnceWithExactly(res.status, 200);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "user logged in successfully",
-        data: { user: serviceResult.user },
-      });
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(200)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "user logged in successfully",
+          data: { user: serviceResult.user },
+        })
+      ).to.be.true;
     });
 
     it("should not leak the raw token in the JSON response body", async () => {
@@ -114,12 +130,13 @@ describe("authController", () => {
 
       await authController.login(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
-      sinon.assert.notCalled(res.cookie);
-      sinon.assert.notCalled(res.status);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
+      expect(res.cookie.called).to.be.false;
+      expect(res.status.called).to.be.false;
     });
   });
-//getme
+  //getme
   describe("getMe()", () => {
     it("should respond 200 with the user profile on success", async () => {
       req.user = { id: "user-1" };
@@ -128,13 +145,20 @@ describe("authController", () => {
 
       await authController.getMe(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(authService.getMe, "user-1");
-      sinon.assert.calledOnceWithExactly(res.status, 200);
-      sinon.assert.calledOnceWithMatch(res.json, {
-        success: true,
-        message: "profile fetched",
-        data: profile,
-      });
+      expect(authService.getMe.calledOnce).to.be.true;
+      expect(authService.getMe.calledWithExactly("user-1")).to.be.true;
+
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(200)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(
+        res.json.calledWithMatch({
+          success: true,
+          message: "profile fetched",
+          data: profile,
+        })
+      ).to.be.true;
     });
 
     it("should call next(error) when getMe throws", async () => {
@@ -145,8 +169,9 @@ describe("authController", () => {
 
       await authController.getMe(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
-      sinon.assert.notCalled(res.status);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
+      expect(res.status.called).to.be.false;
     });
 
     it("should call next(error) if req.user is missing (no id to read)", async () => {
@@ -154,7 +179,7 @@ describe("authController", () => {
 
       await authController.getMe(req, res, next);
 
-      sinon.assert.calledOnce(next);
+      expect(next.calledOnce).to.be.true;
       const errArg = next.firstCall.args[0];
       expect(errArg).to.be.instanceOf(Error);
     });
@@ -168,9 +193,14 @@ describe("authController", () => {
 
       await authController.logout(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(authService.logoutUser, req.user);
-      sinon.assert.calledOnceWithExactly(res.status, 200);
-      sinon.assert.calledOnceWithExactly(res.json, serviceResult);
+      expect(authService.logoutUser.calledOnce).to.be.true;
+      expect(authService.logoutUser.calledWithExactly(req.user)).to.be.true;
+
+      expect(res.status.calledOnce).to.be.true;
+      expect(res.status.calledWithExactly(200)).to.be.true;
+
+      expect(res.json.calledOnce).to.be.true;
+      expect(res.json.calledWithExactly(serviceResult)).to.be.true;
     });
 
     it("should call next(error) when logoutUser throws", async () => {
@@ -180,8 +210,9 @@ describe("authController", () => {
 
       await authController.logout(req, res, next);
 
-      sinon.assert.calledOnceWithExactly(next, error);
-      sinon.assert.notCalled(res.status);
+      expect(next.calledOnce).to.be.true;
+      expect(next.calledWithExactly(error)).to.be.true;
+      expect(res.status.called).to.be.false;
     });
   });
 });
