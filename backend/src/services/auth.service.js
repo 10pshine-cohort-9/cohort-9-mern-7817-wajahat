@@ -32,11 +32,10 @@ const loginSchema = z.object({
     .min(1, "Email and password both are required"),
 });
 
-// Helper to format validation errors
 const validateInput = (schema, data) => {
   const result = schema.safeParse(data);
   if (!result.success) {
-    const error = new Error(result.error.errors[0].message);
+    const error = new Error(result.error.issues[0].message);
     error.statusCode = 400;
     throw error;
   }
