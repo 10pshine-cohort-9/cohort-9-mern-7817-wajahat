@@ -31,19 +31,7 @@ const NotesScreen = ({
     useEffect(() => {
     let isActive = true;
 
-    const clearForTrash = () => {
-      setNotes([]);
-      setLoading(false);
-      setError("");
-    };
-
     const fetchNotes = async () => {
-      // // Trash is not yet implemented due to api missing for that for now
-      // if (section === "trash") {
-      //   if (isActive) clearForTrash();
-      //   return;
-      // }
-
       
       if (isActive) {
         setLoading(true);

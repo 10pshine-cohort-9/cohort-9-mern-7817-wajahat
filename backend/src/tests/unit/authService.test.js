@@ -52,13 +52,15 @@ describe("auth.service", () => {
       expect(result.user).to.not.have.property("password");
       expect(result.token).to.equal("fake-token");
 
-      sinon.assert.calledOnce(prisma.user.findUnique);
-      sinon.assert.calledOnce(prisma.user.create);
-      sinon.assert.calledOnce(jwt.generateToken);
-      sinon.assert.calledWithMatch(jwt.generateToken, {
-        id: "user-1",
-        email: "ali@gmail.com",
-      });
+      expect(prisma.user.findUnique.calledOnce).to.be.true;
+      expect(prisma.user.create.calledOnce).to.be.true;
+      expect(jwt.generateToken.calledOnce).to.be.true;
+      expect(
+        jwt.generateToken.calledWithMatch({
+          id: "user-1",
+          email: "ali@gmail.com",
+        })
+      ).to.be.true;
     });
     // missing required fields
     describe("missing fields", () => {
@@ -70,7 +72,7 @@ describe("auth.service", () => {
           expect(err.statusCode).to.equal(400);
           expect(err.message).to.equal("Email and password are required");
         }
-        sinon.assert.notCalled(prisma.user.findUnique);
+        expect(prisma.user.findUnique.called).to.be.false;
       });
 
       it("should throw 400 if password is missing", async () => {
@@ -81,7 +83,7 @@ describe("auth.service", () => {
           expect(err.statusCode).to.equal(400);
           expect(err.message).to.equal("Email and password are required");
         }
-        sinon.assert.notCalled(prisma.user.findUnique);
+        expect(prisma.user.findUnique.called).to.be.false;
       });
 
       it("should throw 400 if both email and password are missing", async () => {
@@ -133,7 +135,7 @@ describe("auth.service", () => {
         } catch (err) {
           // expected
         }
-        sinon.assert.notCalled(prisma.user.findUnique);
+        expect(prisma.user.findUnique.called).to.be.false;
       });
     });
     // duplicate emails
@@ -152,8 +154,8 @@ describe("auth.service", () => {
           expect(err.message).to.equal("Email already registered");
         }
 
-        sinon.assert.calledOnce(prisma.user.findUnique);
-        sinon.assert.notCalled(prisma.user.create);
+        expect(prisma.user.findUnique.calledOnce).to.be.true;
+        expect(prisma.user.create.called).to.be.false;
       });
 
       it("should log a warning when a duplicate registration is attempted", async () => {
@@ -165,7 +167,7 @@ describe("auth.service", () => {
           // expected
         }
 
-        sinon.assert.calledOnce(logger.warn);
+        expect(logger.warn.calledOnce).to.be.true;
       });
     });
     // password handling
@@ -206,7 +208,7 @@ describe("auth.service", () => {
         } catch (err) {
           // expected
         }
-        sinon.assert.notCalled(prisma.user.findUnique);
+        expect(prisma.user.findUnique.called).to.be.false;
       });
 
       it("should hash the password before storing it (never store plain text)", async () => {
@@ -222,8 +224,8 @@ describe("auth.service", () => {
 
         await authService.registerUser(validPayload);
 
-        sinon.assert.calledOnce(hashStub);
-        sinon.assert.calledWith(hashStub, "Password123!", sinon.match.number);
+        expect(hashStub.calledOnce).to.be.true;
+        expect(hashStub.calledWith("Password123!", sinon.match.number)).to.be.true;
 
         const createArgs = prisma.user.create.firstCall.args[0];
         expect(createArgs.data.password).to.equal("$2b$10$hashedvalue");
@@ -295,7 +297,7 @@ describe("auth.service", () => {
         } catch (err) {
           // expected
         }
-        sinon.assert.notCalled(jwt.generateToken);
+        expect(jwt.generateToken.called).to.be.false;
       });
     });
   });
@@ -319,9 +321,9 @@ describe("auth.service", () => {
       expect(result.user).to.not.have.property("password");
       expect(result.token).to.equal("fake-token");
 
-      sinon.assert.calledOnce(prisma.user.findUnique);
-      sinon.assert.calledOnce(bcrypt.compare);
-      sinon.assert.calledOnce(jwt.generateToken);
+      expect(prisma.user.findUnique.calledOnce).to.be.true;
+      expect(bcrypt.compare.calledOnce).to.be.true;
+      expect(jwt.generateToken.calledOnce).to.be.true;
     });
 
     it("should log successful login", async () => {
@@ -335,7 +337,7 @@ describe("auth.service", () => {
 
       await authService.loginUser(credentials);
 
-      sinon.assert.calledOnce(logger.info);
+      expect(logger.info.calledOnce).to.be.true;
     });
     // user doesn't exist
     describe("user doesn't exist", () => {
@@ -361,7 +363,7 @@ describe("auth.service", () => {
           // expected
         }
 
-        sinon.assert.notCalled(compareStub);
+        expect(compareStub.called).to.be.false;
       });
 
       it("should not generate a token for unknown email", async () => {
@@ -373,7 +375,7 @@ describe("auth.service", () => {
           // expected
         }
 
-        sinon.assert.notCalled(jwt.generateToken);
+        expect(jwt.generateToken.called).to.be.false;
       });
     });
     // wrong password
@@ -394,7 +396,7 @@ describe("auth.service", () => {
           expect(err.statusCode).to.equal(401);
         }
 
-        sinon.assert.notCalled(jwt.generateToken);
+        expect(jwt.generateToken.called).to.be.false;
       });
 
       it("should compare the plain password against the stored hash", async () => {
@@ -411,7 +413,7 @@ describe("auth.service", () => {
           // expected
         }
 
-        sinon.assert.calledWith(compareStub, "wrongpassword", "hashedPassword");
+        expect(compareStub.calledWith("wrongpassword", "hashedPassword")).to.be.true;
       });
     });
     // missing credentials
@@ -424,7 +426,7 @@ describe("auth.service", () => {
           expect(err.statusCode).to.equal(400);
           expect(err.message).to.equal("Email and password both are required");
         }
-        sinon.assert.notCalled(prisma.user.findUnique);
+        expect(prisma.user.findUnique.called).to.be.false;
       });
 
       it("should throw 400 if password is missing", async () => {
@@ -435,7 +437,7 @@ describe("auth.service", () => {
           expect(err.statusCode).to.equal(400);
           expect(err.message).to.equal("Email and password both are required");
         }
-        sinon.assert.notCalled(prisma.user.findUnique);
+        expect(prisma.user.findUnique.called).to.be.false;
       });
 
       it("should throw 400 if both are missing", async () => {
@@ -512,7 +514,7 @@ describe("auth.service", () => {
 
     it("should log the logout event", async () => {
       await authService.logoutUser({ id: "user-1" });
-      sinon.assert.calledOnce(logger.info);
+      expect(logger.info.calledOnce).to.be.true;
     });
   });
   describe("getMe()", () => {
