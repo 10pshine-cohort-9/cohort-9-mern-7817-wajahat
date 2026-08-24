@@ -2,16 +2,23 @@ const authService = require("../services/auth.service");
 
 const register=async(req,res,next)=>{
     try {
-    const result= await authService.registerUser(req.body);
-    return res.status(201).json({
-            success: true,
-            message: "User registered successfully",
-            data: result,
+    const { user, token } = await authService.register(req.body);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000, // adjust cookie expiry as needed
     });
 
-    } catch (error) {
-        next(error);
-    }
+    return res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 const login = async (req, res, next) => {
   try {

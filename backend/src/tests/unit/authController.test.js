@@ -23,7 +23,7 @@ describe("authController", () => {
   });
   //register
   describe("register()", () => {
-    it("should respond 201 with the registered user on success", async () => {
+        it("should set an httpOnly cookie and respond 201 with only the user on success", async () => {
       req.body = {
         firstName: "Ali",
         lastName: "Khan",
@@ -41,6 +41,17 @@ describe("authController", () => {
       expect(authService.registerUser.calledOnce).to.be.true;
       expect(authService.registerUser.calledWithExactly(req.body)).to.be.true;
 
+      expect(res.cookie.calledOnce).to.be.true;
+      const [cookieName, cookieValue, cookieOptions] = res.cookie.firstCall.args;
+      expect(cookieName).to.equal("token");
+      expect(cookieValue).to.equal("fake-token");
+      expect(cookieOptions).to.deep.equal({
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       expect(res.status.calledOnce).to.be.true;
       expect(res.status.calledWithExactly(201)).to.be.true;
 
@@ -49,11 +60,30 @@ describe("authController", () => {
         res.json.calledWithMatch({
           success: true,
           message: "User registered successfully",
-          data: serviceResult,
+          data: { user: serviceResult.user },
         })
       ).to.be.true;
 
       expect(next.called).to.be.false;
+    });
+
+    it("should not leak the raw token in the registration JSON response body", async () => {
+      req.body = {
+        firstName: "Ali",
+        lastName: "Khan",
+        email: "ali@gmail.com",
+        password: "Password123!",
+      };
+      sinon.stub(authService, "registerUser").resolves({
+        user: { id: "user-1", email: "ali@gmail.com" },
+        token: "super-secret-token",
+      });
+
+      await authController.register(req, res, next);
+
+      const jsonPayload = res.json.firstCall.args[0];
+      expect(jsonPayload.data).to.not.have.property("token");
+      expect(JSON.stringify(jsonPayload)).to.not.include("super-secret-token");
     });
 
     it("should call next(error) when registerUser throws", async () => {
@@ -69,6 +99,7 @@ describe("authController", () => {
       expect(res.json.called).to.be.false;
     });
   });
+  
   //login
   describe("login()", () => {
     it("should set an httpOnly cookie and respond 200 with the user on success", async () => {
