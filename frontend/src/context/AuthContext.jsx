@@ -15,15 +15,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+   useEffect(() => {
     const restoreUser = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       try {
         const response = await getCurrentUser();
 
@@ -33,12 +26,7 @@ export const AuthProvider = ({ children }) => {
           response.data?.data;
 
         setUser(currentUser);
-      } catch (error) {
-        console.error("Failed to restore user:", error);
-
-        localStorage.removeItem("token");
-        setUser(null);
-      } finally {
+      }  finally {
         setLoading(false);
       }
     };

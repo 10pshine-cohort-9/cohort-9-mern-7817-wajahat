@@ -2,13 +2,13 @@ const authService = require("../services/auth.service");
 
 const register=async(req,res,next)=>{
     try {
-    const { user, token } = await authService.register(req.body);
+    const { user, token } = await authService.registerUser(req.body);
 
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000, // adjust cookie expiry as needed
+      maxAge: 24 * 60 * 60 * 1000, 
     });
 
     return res.status(201).json({
