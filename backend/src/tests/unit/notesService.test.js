@@ -206,9 +206,11 @@ describe("notes.service", () => {
 
       await notesService.getNoteById("note-1", userId);
 
-      sinon.assert.calledWithMatch(prismaStub.note.findFirst, {
-        where: { id: "note-1", userId },
-      });
+            expect(
+        prismaStub.note.findFirst.calledWithMatch({
+          where: { id: "note-1", userId },
+        })
+      ).to.be.true;
     });
 
     it("should throw 404 if note not found", async () => {
@@ -295,9 +297,11 @@ describe("notes.service", () => {
 
       await notesService.updateNote("note-1", userId, { title: "Updated", content: "New" });
 
-      sinon.assert.calledWithMatch(prismaStub.note.findFirst, {
-        where: { id: "note-1", userId },
-      });
+            expect(
+        prismaStub.note.findFirst.calledWithMatch({
+          where: { id: "note-1", userId },
+        })
+      ).to.be.true;
     });
 
     it("should propagate 500 if findFirst throws", async () => {
@@ -368,8 +372,9 @@ describe("notes.service", () => {
       prismaStub.note.delete.resolves({});
 
       await notesService.deleteNote("note-1", userId);
-
-      sinon.assert.calledWithMatch(prismaStub.note.delete, { where: { id: "note-1" } });
+      expect(
+        prismaStub.note.delete.calledWithMatch({ where: { id: "note-1" } })
+      ).to.be.true;
     });
 
     it("should propagate 500 if findFirst throws", async () => {
@@ -484,10 +489,12 @@ describe("notes.service", () => {
 
       await notesService.updateStarStatus("note-1", userId, true);
 
-      sinon.assert.calledWithMatch(prismaStub.note.updateMany, {
-        where: { id: "note-1", userId },
-        data: { isStarred: true },
-      });
+            expect(
+        prismaStub.note.updateMany.calledWithMatch({
+          where: { id: "note-1", userId },
+          data: { isStarred: true },
+        })
+      ).to.be.true;
     });
 
     it("should propagate 500 if updateMany throws", async () => {

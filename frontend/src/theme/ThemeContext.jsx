@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useCallback, useState } from "react";
 import { themes } from "./theme";
 
 const ThemeContext = createContext();
@@ -19,27 +19,32 @@ export const ThemeProvider = ({ children }) => {
   }, [theme]);
 
   //validated that customer can only toggl between light and dark theme like pre defined ones
-  const changeTheme = (newTheme) => {
+    const changeTheme = useCallback((newTheme) => {
     if (themes[newTheme]) {
       setTheme(newTheme);
     } else {
       console.warn(`Invalid theme requested: ${newTheme}`);
     }
-  };
+  }, []);
 
-  const toggleTheme = () => {
+    const toggleTheme = useCallback(() => {
     setTheme((currentTheme) =>
       currentTheme === "light" ? "dark" : "light"
     );
-  };
+  }, []);
+
+    const value = useMemo(
+    () => ({
+      theme,
+      setTheme: changeTheme,
+      toggleTheme,
+    }),
+    [theme, changeTheme, toggleTheme]
+  );
 
   return (
     <ThemeContext.Provider
-      value={{
-        theme,
-        setTheme: changeTheme, 
-        toggleTheme,
-      }}
+      value={value}
     >
       {children}
     </ThemeContext.Provider>

@@ -2,6 +2,8 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
+  useCallback,
   useState,
 } from "react";
 
@@ -44,11 +46,11 @@ export const AuthProvider = ({ children }) => {
     restoreUser();
   }, []);
 
-  const login = (userData) => {
+  const login = useCallback((userData) => {
     setUser(userData);
-  };
+  }, []);
 
-  const logout = async () => {
+    const logout = useCallback(async () => {
     try {
       await logoutUser();
     } catch (error) {
@@ -56,17 +58,22 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setUser(null);
     }
-  };
+  }, []);
+
+    const value = useMemo(
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      loading,
+      login,
+      logout,
+    }),
+    [user, loading, login, logout]
+  );
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        loading,
-        login,
-        logout,
-      }}
+      value={value}
     >
       {children}
     </AuthContext.Provider>

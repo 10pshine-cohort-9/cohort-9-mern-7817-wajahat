@@ -8,9 +8,26 @@ const AuthForm = ({
   onCancel,
   footer,
 }) => {
+
+  let message = null;
+
+  if (error) {
+    message = (
+      <span className="text-(--color-primary)">
+        {error}
+      </span>
+    );
+  } else if (success) {
+    message = (
+      <span className="text-(--color-accent)">
+        {success}
+      </span>
+    );
+  }
+
   return (
     <div>
-      <p className="mb-5 text-center text-[11px] font-medium uppercase tracking-wide text-[(--color-text)">
+      <p className="mb-5 text-center text-[11px] font-medium uppercase tracking-wide text-(--color-text)">
         {title}
       </p>
 
@@ -21,15 +38,7 @@ const AuthForm = ({
         {fields}
 
         <div className="min-h-6 px-1 text-center text-[13px] leading-5">
-          {error ? (
-            <span className="text-(--color-primary)">
-              {error}
-            </span>
-          ) : success ? (
-            <span className="text-(--color-accent)">
-              {success}
-            </span>
-          ) : null}
+          {message}
         </div>
 
         <div className="flex gap-2 pt-2">
@@ -50,7 +59,7 @@ const AuthForm = ({
         </div>
       </form>
 
-      <p className="mt-6 text-center text-[11px] text-(--color-text-secondary)]">
+      <p className="mt-6 text-center text-[11px] text-(--color-text-secondary)">
         {footer}
       </p>
     </div>

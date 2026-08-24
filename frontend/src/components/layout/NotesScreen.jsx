@@ -6,6 +6,18 @@ import {
   searchNotes,
 } from "../../services/notesService";
 import Loader from "../common/Loader";
+
+
+const fetchNotesData = (section, query) => {
+  if (query) {
+    return searchNotes(query);
+  }
+  if (section === "starred") {
+    return getStarredNotes();
+  }
+  return getAllNotes();
+};
+
 const NotesScreen = ({
   section = "notes",
   searchQuery = "",
@@ -14,59 +26,37 @@ const NotesScreen = ({
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  useEffect(() => {
-  let isActive = true;
+  
 
-  const fetchNotes = async () => {
-    // Trash is not yet implemented due to api missing for that for now
-    if (section === "trash") {
-      if (isActive) {
-        setNotes([]);
-        setLoading(false);
-        setError("");
-      }
-      return;
-    }
+    useEffect(() => {
+    let isActive = true;
 
-    try {
+    const fetchNotes = async () => {
+      
       if (isActive) {
         setLoading(true);
         setError("");
       }
 
-      let response;
-      const query = searchQuery.trim();
-
-      if (query) {
-        response = await searchNotes(query);
-      } else if (section === "starred") {
-        response = await getStarredNotes();
-      } else {
-        response = await getAllNotes();
+      try {
+        const response = await fetchNotesData(section, searchQuery.trim());
+        if (isActive) setNotes(response.data?.data || []);
+      } catch (fetchError) {
+        console.error("Failed to fetch notes:", fetchError);
+        if (isActive) setError("Failed to load notes.");
+      } finally {
+        if (isActive) setLoading(false);
       }
+    };
 
-      if (isActive) {
-        setNotes(response.data?.data || []);
-      }
-    } catch (error) {
-      console.error("Failed to fetch notes:", error);
+    fetchNotes();
 
-      if (isActive) {
-        setError("Failed to load notes.");
-      }
-    } finally {
-      if (isActive) {
-        setLoading(false);
-      }
-    }
-  };
+    return () => {
+      isActive = false;
+    };
+  }, [section, searchQuery]);
 
-  fetchNotes();
 
-  return () => {
-    isActive = false;
-  };
-}, [section, searchQuery]);
   const handleDelete = (noteId) => {
     setNotes((previousNotes) =>
       previousNotes.filter((note) => note.id !== noteId)
@@ -83,9 +73,9 @@ const NotesScreen = ({
       previousNotes.map((note) =>
         note.id === noteId
           ? {
-              ...note,
-              isStarred: updatedNote.isStarred,
-            }
+            ...note,
+            isStarred: updatedNote.isStarred,
+          }
           : note
       )
     );
@@ -124,17 +114,16 @@ const NotesScreen = ({
     );
   }
   if (loading) {
+    let loadingMessage = "Opening your notes...";
+    if (searchQuery.trim()) {
+      loadingMessage = "Searching your notes...";
+    } else if (section === "starred") {
+      loadingMessage = "Finding your starred notes...";
+    }
+
     return (
       <section className="w-full px-7">
-        <Loader
-          message={
-            searchQuery.trim()
-              ? "Searching your notes..."
-              : section === "starred"
-                ? "Finding your starred notes..."
-                : "Opening your notes..."
-          }
-        />
+        <Loader message={loadingMessage} />
       </section>
     );
   }
@@ -151,6 +140,12 @@ const NotesScreen = ({
       </section>
     );
   }
+  let emptyStateMessage = "You don't have any notes yet.";
+  if (searchQuery.trim()) {
+    emptyStateMessage = "No notes found.";
+  } else if (section === "starred") {
+    emptyStateMessage = "You don't have any starred notes yet.";
+  }
   return (
     <section className="w-full px-7">
       <div className="mb-7">
@@ -165,11 +160,7 @@ const NotesScreen = ({
       {notes.length === 0 ? (
         <div className="py-16 text-center">
           <p className="text-sm text-(--color-text-secondary)">
-            {searchQuery.trim()
-              ? "No notes found."
-              : section === "starred"
-                ? "You don't have any starred notes yet."
-                : "You don't have any notes yet."}
+            {emptyStateMessage}
           </p>
         </div>
       ) : (
